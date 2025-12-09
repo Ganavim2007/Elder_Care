@@ -1,39 +1,197 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+// screens/SignupScreen.js
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Animated,
+} from "react-native";
 
 export default function SignupScreen({ navigation }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
+
+  // Logo Animation
+  const logoScale = useRef(new Animated.Value(0.5)).current;
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(logoScale, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.timing(logoOpacity, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   const handleSignup = () => {
-    // Placeholder: navigate to Dashboard after signup
-    navigation.navigate("UserDashboard");
+    // Navigate to Login after signup (placeholder)
+    navigation.navigate("Login");
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Signup</Text>
+      {/* Logo Animation */}
+      <Animated.Image
+        source={require("../assets/logo.jpg")}
+        style={[
+          styles.logo,
+          {
+            opacity: logoOpacity,
+            transform: [{ scale: logoScale }],
+          },
+        ]}
+      />
 
-      <TextInput placeholder="Full Name" style={styles.input} value={name} onChangeText={setName} />
-      <TextInput placeholder="Email" style={styles.input} value={email} onChangeText={setEmail} keyboardType="email-address" />
-      <TextInput placeholder="Password" style={styles.input} value={password} onChangeText={setPassword} secureTextEntry />
+      <Text style={styles.title}>Create Account</Text>
+      <Text style={styles.subtitle}>Sign up to get started</Text>
 
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
-        <Text style={styles.buttonText}>Signup</Text>
+      {/* Name */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.floatingLabel}>Full Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your full name"
+          placeholderTextColor="#9d9d9d"
+          onChangeText={setName}
+        />
+      </View>
+
+      {/* Email */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.floatingLabel}>Email</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your email"
+          placeholderTextColor="#9d9d9d"
+          onChangeText={setEmail}
+        />
+      </View>
+
+      {/* Password */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.floatingLabel}>Password</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter password"
+          placeholderTextColor="#9d9d9d"
+          secureTextEntry={!showPass}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity
+          style={styles.eyeIcon}
+          onPress={() => setShowPass(!showPass)}
+        >
+          <Image
+            source={
+              showPass
+                ? require("../assets/eye-off.png")
+                : require("../assets/eye.png")
+            }
+            style={styles.eyeImg}
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* Signup Button */}
+      <TouchableOpacity style={styles.btn} onPress={handleSignup}>
+        <Text style={styles.btnText}>Sign Up</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-        <Text style={{ color: "#3e73c8", marginTop: 20 }}>Already have an account? Login</Text>
+        <Text style={styles.link}>Already have an account? Login</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", padding: 20, backgroundColor: "#f3f8f6" },
-  title: { fontSize: 28, fontWeight: "bold", color: "#4c9f70", marginBottom: 30 },
-  input: { width: "80%", padding: 15, borderWidth: 1, borderColor: "#ccd6e0", borderRadius: 10, marginBottom: 20, backgroundColor: "#fff" },
-  button: { width: "80%", padding: 15, backgroundColor: "#3e73c8", borderRadius: 10, marginTop: 10 },
-  buttonText: { color: "#fff", textAlign: "center", fontSize: 18, fontWeight: "600" },
+  container: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+    padding: 25,
+    justifyContent: "center",
+  },
+
+  logo: {
+    width: 100,
+    height: 100,
+    alignSelf: "center",
+    marginBottom: 15,
+  },
+
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    textAlign: "center",
+    color: "#0066cc",
+  },
+
+  subtitle: {
+    textAlign: "center",
+    color: "#5a5a5a",
+    marginBottom: 20,
+  },
+
+  inputContainer: {
+    marginVertical: 10,
+  },
+
+  floatingLabel: {
+    fontSize: 14,
+    color: "#009688",
+    marginBottom: 3,
+    marginLeft: 5,
+  },
+
+  input: {
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#bfbfbf",
+    borderRadius: 8,
+    backgroundColor: "#f9f9f9",
+    paddingRight: 45,
+  },
+
+  eyeIcon: {
+    position: "absolute",
+    right: 10,
+    top: 40,
+  },
+
+  eyeImg: {
+    width: 22,
+    height: 22,
+  },
+
+  btn: {
+    backgroundColor: "#009688",
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 20,
+  },
+
+  btnText: {
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 16,
+  },
+
+  link: {
+    color: "#0066cc",
+    textAlign: "center",
+    marginTop: 15,
+  },
 });
