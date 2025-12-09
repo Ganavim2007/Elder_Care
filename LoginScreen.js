@@ -1,57 +1,185 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Animated,
+} from "react-native";
 
-export default function CaregiverDashboard() {
+export default function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
+
+  // Logo Animation
+  const logoScale = useRef(new Animated.Value(0.5)).current;
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(logoScale, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.timing(logoOpacity, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  const handleLogin = () => {
+    navigation.navigate("Home");
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Caregiver Dashboard</Text>
-      <Text style={styles.subtitle}>View alerts & mood trends of seniors</Text>
+    <View style={styles.container}>
+      
+      {/* Logo Animation */}
+      <Animated.Image
+        source={require("../assets/logo.jpg")}
+        style={[
+          styles.logo,
+          {
+            opacity: logoOpacity,
+            transform: [{ scale: logoScale }],
+          },
+        ]}
+      />
 
-      {/* Alert cards */}
-      <View style={styles.card}>
-        <Image source={require('../assets/avatar.png')} style={styles.cardImage} />
-        <Text style={styles.cardTitle}>Grandma missed medicine</Text>
-        <Text style={styles.cardSubtitle}>Alert sent today at 8:30 AM</Text>
+      <Text style={styles.title}>Welcome Back</Text>
+      <Text style={styles.subtitle}>Login to continue</Text>
+
+      {/* Email */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.floatingLabel}>Email</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter email"
+          placeholderTextColor="#9d9d9d"
+          onChangeText={setEmail}
+        />
       </View>
 
-      <View style={styles.card}>
-        <Image source={require('../assets/avatar.png')} style={styles.cardImage} />
-        <Text style={styles.cardTitle}>Mood Low</Text>
-        <Text style={styles.cardSubtitle}>Detected sadness in last check-in</Text>
+      {/* Password */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.floatingLabel}>Password</Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Enter password"
+          placeholderTextColor="#9d9d9d"
+          secureTextEntry={!showPass}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity
+          style={styles.eyeIcon}
+          onPress={() => setShowPass(!showPass)}
+        >
+          <Image
+            source={
+              showPass
+                ? require("../assets/eye-off.png")
+                : require("../assets/eye.png")
+            }
+            style={styles.eyeImg}
+          />
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.card}>
-        <Image source={require('../assets/avatar.png')} style={styles.cardImage} />
-        <Text style={styles.cardTitle}>Schedule a check-in</Text>
-        <Text style={styles.cardSubtitle}>Reminder: Today at 5:00 PM</Text>
-      </View>
-    </ScrollView>
+      {/* Login Button */}
+      <TouchableOpacity style={styles.btn} onPress={handleLogin}>
+        <Text style={styles.btnText}>Login</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+        <Text style={styles.link}>Don't have an account? Sign Up</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    paddingVertical: 30,
-    backgroundColor: '#f3f8f6',
-    minHeight: '100%',
+    flex: 1,
+    backgroundColor: "#ffffff",
+    padding: 25,
+    justifyContent: "center",
   },
-  title: { fontSize: 28, fontWeight: 'bold', color: '#4c9f70', marginBottom: 5 },
-  subtitle: { fontSize: 16, color: '#666', marginBottom: 20 },
-  card: {
-    width: '85%',
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 15,
+
+  logo: {
+    width: 100,
+    height: 100,
+    alignSelf: "center",
+    marginBottom: 15,
+  },
+
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    textAlign: "center",
+    color: "#0066cc",
+  },
+
+  subtitle: {
+    textAlign: "center",
+    color: "#5a5a5a",
     marginBottom: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
   },
-  cardImage: { width: 60, height: 60, marginBottom: 10 },
-  cardTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', textAlign: 'center' },
-  cardSubtitle: { fontSize: 14, color: '#888', textAlign: 'center' },
+
+  inputContainer: {
+    marginVertical: 10,
+  },
+
+  floatingLabel: {
+    fontSize: 14,
+    color: "#009688",
+    marginBottom: 3,
+    marginLeft: 5,
+  },
+
+  input: {
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#bfbfbf",
+    borderRadius: 8,
+    backgroundColor: "#f9f9f9",
+    paddingRight: 45,
+  },
+
+  eyeIcon: {
+    position: "absolute",
+    right: 10,
+    top: 40,
+  },
+
+  eyeImg: {
+    width: 22,
+    height: 22,
+  },
+
+  btn: {
+    backgroundColor: "#009688",
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 20,
+  },
+
+  btnText: {
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 16,
+  },
+
+  link: {
+    color: "#0066cc",
+    textAlign: "center",
+    marginTop: 15,
+  },
 });
